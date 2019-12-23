@@ -1,0 +1,7 @@
+[all:vars]
+ansible_user='fedora'
+ansible_become='yes'
+ansible_become_pass='{{ fedora_password }}'
+ansible_become_method='sudo'
+
+[blog]

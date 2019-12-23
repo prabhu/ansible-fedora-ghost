@@ -1,0 +1,30 @@
+---
+- name: Ensure group "ghostd" exists
+  group:
+    name: ghostd
+    state: present
+
+- name: Add the user 'ghostd'
+  user:
+    name: ghostd
+    comment: Ghostd user
+    groups: ghostd,wheel
+
+- name: Create ghost directory if it does not exist
+  file:
+    path: /var/www/ghost
+    state: directory
+    mode: '0755'
+
+- name: Recursively change ownership of a directory
+  file:
+    path: /var/www/ghost
+    state: directory
+    recurse: yes
+    owner: ghostd
+    group: ghostd
+
+- name: Install "ghost-cli" node.js package globally.
+  npm:
+    name: ghost-cli
+    global: yes

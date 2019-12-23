@@ -1,0 +1,11 @@
+---
+- name: Setup dev machine
+  hosts: all
+  remote_user: fedora
+  become: yes
+  become_method: sudo
+
+  roles:
+    - common
+    - mysql
+    - ghost

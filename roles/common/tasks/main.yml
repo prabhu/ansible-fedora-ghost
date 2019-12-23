@@ -1,0 +1,55 @@
+---
+- name: Copy the MySQL repository definition
+  copy: src=mysql-community.repo dest=/etc/yum.repos.d/mysql-community.repo
+
+- name: Reload ansible_facts
+  setup:
+
+- name: Add packages
+  dnf:
+    name: [
+            'nodejs', 'nginx', 'vim', 'unzip', 'iftop', 'cockpit', 'iotop', 'podman',
+            'buildah', 'firewalld', 'dnf-automatic', 'libselinux-utils', 'python3-libselinux',
+            'python3-libsemanage', 'mysql-community-server', 'certbot', 'certbot-nginx', 'cronie'
+          ]
+    state: present
+- name: install the 'Development tools' package group
+  dnf:
+    name: '@Development tools'
+    state: present
+- name: Start services, if not started
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+    - firewalld
+    - sshd
+    - nginx
+    - cockpit
+    - mysqld
+    - crond
+
+- name: Add firewall rules
+  firewalld:
+    service: "{{ item }}"
+    permanent: yes
+    state: enabled
+    zone: public
+  with_items:
+    - http
+    - https
+    - ssh
+    - cockpit
+- name: Block icmp requests ping
+  firewalld:
+    zone: public
+    state: enabled
+    permanent: yes
+    icmp_block_inversion: yes
+- name: Block icmp requests
+  firewalld:
+    zone: public
+    state: enabled
+    permanent: yes
+    icmp_block: echo-request
